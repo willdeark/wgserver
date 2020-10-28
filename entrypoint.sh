@@ -1,40 +1,9 @@
 #!/bin/bash
+. /www/functions/utils.sh
 
 SERVER_PROT="5180"
 SERVER_KEY="0729EF6296854384B5ABD2ECB9335016"
 SERVER_URL="https://c.qishi.vip"
-
-_md5(){
-    echo -n $1 | md5sum | cut -d ' ' -f 1;
-}
-
-_upper(){
-    echo -n $1 | tr "[a-z]" "[A-Z]";
-}
-
-_rand(){
-    min=$1
-    max=$(($2-$min+1))
-    num=$(cat /dev/urandom | head -n 10 | cksum | awk -F ' ' '{print $1}')
-    echo $(($num%$max+$min))
-}
-
-_rand_str(){
-    str=$(_rand 100000000000 999999999999)
-    echo -n $str | md5sum | cut -d ' ' -f 1;
-}
-
-_setcon(){
-    sed -i '/'$1'/d' /usr/local/bin/entrypoint.ini
-    if [ "$2" != "" ];then
-        echo "$1=$2" >> /usr/local/bin/entrypoint.ini
-    fi
-}
-
-_getcon(){
-    STRING=$(sed '/^'$1'=/!d;s/.*=//' /usr/local/bin/entrypoint.ini)
-    echo -n "$STRING"
-}
 
 ########################################################################
 ########################################################################
@@ -83,7 +52,7 @@ EOF
     wg-quick down server
     wg-quick up server
 
-    str1="ip=${serverip}&key=$(_getcon WGKEY)&port=${SERVER_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
+    str1="ip=${serverip}&key=$(_getcon APIKEY)&port=${SERVER_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
     str2="${str1}&${SERVER_KEY}"
     sign=$(_upper $(_md5 $str2))
     curl "${SERVER_URL}/api/publish/server?${str1}&sign=${sign}"
@@ -104,9 +73,9 @@ entrypoint() {
 ########################################################################
 ########################################################################
 
-if [ -z "$(_getcon WGKEY)" ]; then
-    WGKEY=$(_rand_str)
-    _setcon WGKEY "$WGKEY"
+if [ -z "$(_getcon APIKEY)" ]; then
+    APIKEY=$(_rand_str)
+    _setcon APIKEY "$APIKEY"
     wireguard
     lighttpd
 fi
