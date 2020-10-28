@@ -1,6 +1,8 @@
 #!/bin/sh
 
 _wireguard() {
+    mkdir /etc/wireguard
+    cd /etc/wireguard
     wg genkey | tee sprivatekey | wg pubkey >spublickey
     wg genkey | tee cprivatekey | wg pubkey >cpublickey
     s1=$(cat sprivatekey)
