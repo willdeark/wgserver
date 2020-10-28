@@ -32,6 +32,26 @@ _getcon(){
     echo -n "$STRING"
 }
 
+_generatesign() {
+    JSON_STRING=$1
+    list=$(echo $JSON_STRING | jq -S);
+    length=$(echo $JSON_STRING | jq -S 'length');
+    string=""
+    for index in $(seq 0 $length)
+    do
+        if [ "$index" -lt "$length" ]; then
+            key=$(echo $list | jq -r '.|keys['${index}']')
+            val=$(echo $list | jq -r '.'${key})
+            if [ "$key" != "sign" ]; then
+                string=${string}${key}'='${val}'&'
+            fi
+        fi
+    done
+    str2=${string}$(_getcon APIKEY)
+    sign=$(_upper $(_md5 $str2))
+    echo "$sign"
+}
+
 ########################################################################
 ########################################################################
 ########################################################################

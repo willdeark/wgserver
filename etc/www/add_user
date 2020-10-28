@@ -6,3 +6,9 @@
 ########################################################################
 
 APIKEY=$(_getcon APIKEY)
+echo "$APIKEY"
+
+POST_STRING=$(cat)
+sign=$(_generatesign $POST_STRING)
+
+echo $sign
