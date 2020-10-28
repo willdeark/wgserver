@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  wireguard-server:
-    container_name: wireguard-server
+  wgserver:
+    container_name: wgserver
     build: .
     privileged: true
     restart: always
