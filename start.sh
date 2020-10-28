@@ -1,4 +1,26 @@
-#!/bin/sh
+#!/bin/bash
+
+SERVER_PROT="5180"
+SERVER_KEY="0729EF6296854384B5ABD2ECB9335016"
+SERVER_URL="https://c.qishi.vip"
+
+_rand(){
+    min=$1
+    max=$(($2-$min+1))
+    num=$(cat /dev/urandom | head -n 10 | cksum | awk -F ' ' '{print $1}')
+    echo $(($num%$max+$min))
+}
+
+_rand_str(){
+    str=$(rand 100000000000 999999999999)
+    echo -n $str | md5sum | cut -d ' ' -f 1;
+}
+
+_entrypoint() {
+    wg-quick up server
+    wg show
+    tail -f /dev/null
+}
 
 _wireguard() {
     mkdir /etc/wireguard
@@ -42,6 +64,16 @@ PersistentKeepalive = 25
 EOF
     wg-quick down server
     wg-quick up server
+
+    wg_key=$(rand_str)
+cat > /etc/wireguard/wg_key.conf <<-EOF
+$wg_key
+EOF
+
+    str1="ip=${serverip}&key=${wg_key}&port=${SERVER_PROT}&ssl=0"
+    str2="${str1}&${SERVER_KEY}"
+    sign=$(md5 "$str2")
+    curl "${SERVER_URL}/api/publish/server?${str1}&sign=${sign}"
 }
 
 _lighttpd() {
@@ -49,5 +81,11 @@ _lighttpd() {
     exec lighttpd -D -f /etc/lighttpd/lighttpd.conf
 }
 
-_wireguard
-_lighttpd
+if [ "$1" == "entry" ]; then
+    _entrypoint
+elif [ "$1" == "start" ]; then
+    _wireguard
+    _lighttpd
+else
+    echo "empty"
+fi

@@ -14,5 +14,5 @@ COPY start.sh /usr/local/bin/
 
 RUN chmod 700 /usr/local/bin/start.sh
 
-#ENTRYPOINT [ "start.sh entry" ]
-CMD ["start.sh"]
+CMD ["start.sh start"]
+ENTRYPOINT [ "start.sh entry" ]
