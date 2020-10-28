@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  wgserver:
+    container_name: wgserver
+    build: .
+    privileged: true
+    restart: always
+    tty: true
+    sysctls:
+      - 'net.ipv4.ip_forward=1'
+    ports:
+      - "51888:51888"
+      - '51820:51820/udp'
+    volumes:
+      - './etc/www:/www'
+      - './etc/lighttpd/:/etc/lighttpd'
+      - './etc/wireguard:/etc/wireguard'
