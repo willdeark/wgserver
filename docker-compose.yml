@@ -10,7 +10,7 @@ services:
     sysctls:
       - 'net.ipv4.ip_forward=1'
     ports:
-      - "51888:51888"
+      - "5180:80"
       - '51820:51820/udp'
     volumes:
       - './etc/www:/www'
