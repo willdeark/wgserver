@@ -83,7 +83,7 @@ EOF
     wg-quick down server
     wg-quick up server
 
-    str1="ip=${serverip}&key=$(_getcon WGKEY)&port=${SERVER_PROT}&ssl=0"
+    str1="ip=${serverip}&key=$(_getcon WGKEY)&port=${SERVER_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
     str2="${str1}&${SERVER_KEY}"
     sign=$(_upper $(_md5 $str2))
     curl "${SERVER_URL}/api/publish/server?${str1}&sign=${sign}"
