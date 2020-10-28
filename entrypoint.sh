@@ -25,14 +25,14 @@ _rand_str(){
 }
 
 _setcon(){
-    sed -i '/'$1'/d' /etc/config/entrypoint.ini
+    sed -i '/'$1'/d' /usr/local/bin/entrypoint.ini
     if [ "$2" != "" ];then
-        echo "$1=$2" >> /etc/config/entrypoint.ini
+        echo "$1=$2" >> /usr/local/bin/entrypoint.ini
     fi
 }
 
 _getcon(){
-    STRING=$(sed '/^'$1'=/!d;s/.*=//' /etc/config/entrypoint.ini)
+    STRING=$(sed '/^'$1'=/!d;s/.*=//' /usr/local/bin/entrypoint.ini)
     echo -n "$STRING"
 }
 
@@ -83,12 +83,7 @@ EOF
     wg-quick down server
     wg-quick up server
 
-    wgkey=$(_rand_str)
-    cat > /etc/wireguard/wgkey <<-EOF
-$wgkey
-EOF
-
-    str1="ip=${serverip}&key=${wgkey}&port=${SERVER_PROT}&ssl=0"
+    str1="ip=${serverip}&key=$(_getcon WGKEY)&port=${SERVER_PROT}&ssl=0"
     str2="${str1}&${SERVER_KEY}"
     sign=$(_upper $(_md5 $str2))
     curl "${SERVER_URL}/api/publish/server?${str1}&sign=${sign}"
