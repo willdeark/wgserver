@@ -4,6 +4,14 @@ SERVER_PROT="5180"
 SERVER_KEY="0729EF6296854384B5ABD2ECB9335016"
 SERVER_URL="https://c.qishi.vip"
 
+_md5(){
+    echo -n $1 | md5sum | cut -d ' ' -f 1;
+}
+
+_upper(){
+    echo -n $1 | tr "[a-z]" "[A-Z]";
+}
+
 _rand(){
     min=$1
     max=$(($2-$min+1))
@@ -12,17 +20,27 @@ _rand(){
 }
 
 _rand_str(){
-    str=$(rand 100000000000 999999999999)
+    str=$(_rand 100000000000 999999999999)
     echo -n $str | md5sum | cut -d ' ' -f 1;
 }
 
-_entrypoint() {
-    wg-quick up server
-    wg show
-    tail -f /dev/null
+_setcon(){
+    sed -i '/'$1'/d' /etc/config/entrypoint.ini
+    if [ "$2" != "" ];then
+        echo "$1=$2" >> /etc/config/entrypoint.ini
+    fi
 }
 
-_wireguard() {
+_getcon(){
+    STRING=$(sed '/^'$1'=/!d;s/.*=//' /etc/config/entrypoint.ini)
+    echo -n "$STRING"
+}
+
+########################################################################
+########################################################################
+########################################################################
+
+wireguard() {
     mkdir /etc/wireguard
     cd /etc/wireguard
     wg genkey | tee sprivatekey | wg pubkey >spublickey
@@ -65,27 +83,39 @@ EOF
     wg-quick down server
     wg-quick up server
 
-    wg_key=$(rand_str)
-cat > /etc/wireguard/wg_key.conf <<-EOF
-$wg_key
+    wgkey=$(_rand_str)
+    cat > /etc/wireguard/wgkey <<-EOF
+$wgkey
 EOF
 
-    str1="ip=${serverip}&key=${wg_key}&port=${SERVER_PROT}&ssl=0"
+    str1="ip=${serverip}&key=${wgkey}&port=${SERVER_PROT}&ssl=0"
     str2="${str1}&${SERVER_KEY}"
-    sign=$(md5 "$str2")
+    sign=$(_upper $(_md5 $str2))
     curl "${SERVER_URL}/api/publish/server?${str1}&sign=${sign}"
 }
 
-_lighttpd() {
+lighttpd() {
     chmod a+w /dev/pts/0
     exec lighttpd -D -f /etc/lighttpd/lighttpd.conf
 }
 
-if [ "$1" == "entry" ]; then
-    _entrypoint
-elif [ "$1" == "start" ]; then
-    _wireguard
-    _lighttpd
-else
-    echo "empty"
+entrypoint() {
+    wg-quick up server
+    wg show
+    tail -f /dev/null
+}
+
+########################################################################
+########################################################################
+########################################################################
+
+if [ -z "$(_getcon WGKEY)" ]; then
+    WGKEY=$(_rand_str)
+    _setcon WGKEY "$WGKEY"
+    wireguard
+    lighttpd
 fi
+
+entrypoint
+
+

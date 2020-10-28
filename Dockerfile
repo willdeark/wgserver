@@ -10,9 +10,8 @@ RUN apk add --update --no-cache \
   && rm -rf /var/cache/apk/*
 
 COPY etc/lighttpd/* /etc/lighttpd/
-COPY start.sh /usr/local/bin/
+COPY entrypoint.sh /usr/local/bin/
 
-RUN chmod 700 /usr/local/bin/start.sh
+RUN chmod 700 /usr/local/bin/entrypoint.sh
 
-CMD ["start.sh", "start"]
-ENTRYPOINT ["start.sh", "entry"]
+ENTRYPOINT ["entrypoint.sh"]
