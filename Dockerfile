@@ -3,7 +3,6 @@ FROM alpine
 RUN apk add --update --no-cache \
     lighttpd \
     lighttpd-mod_auth \
-    sudo \
     curl \
     jq \
     wireguard-tools \
