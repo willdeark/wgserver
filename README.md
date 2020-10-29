@@ -24,7 +24,7 @@ cp config.example config.json
   "wireguard": [
     {
       "name": "wgserver1",            //wg服务名称
-      "server_ip": "100.100.100.101", //wg服务IP
+      "server_ip": "100.100.100.101", //wg服务IP，留空或填写auto自动获取
       "server_port": 11801,           //wg服务端口
       "http_prot": 8801               //wg服务api端口
     },

@@ -15,6 +15,10 @@ wireguard() {
     c1=$(cat cprivatekey)
     c2=$(cat cpublickey)
     eth=$(ls /sys/class/net | grep ^e | head -n1)
+    serverip=$SERVER_IP
+    if [ -z "$serverip" ] || [ "$serverip" == "auto" ]; then
+        serverip=$(curl ipv4.icanhazip.com)
+    fi
     chmod 777 -R /etc/wireguard
 
     cat >/etc/wireguard/server.conf <<-EOF
@@ -39,14 +43,14 @@ DNS = 8.8.8.8
 MTU = 1420
 [Peer]
 PublicKey = $s2
-Endpoint = $SERVER_IP:$SERVER_PORT
+Endpoint = $serverip:$SERVER_PORT
 AllowedIPs = 0.0.0.0/0, ::0/0
 PersistentKeepalive = 25
 EOF
     wg-quick down server
     wg-quick up server
 
-    str1="ip=${SERVER_IP}&key=$(_getcon APIKEY)&port=${HTTP_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
+    str1="ip=${serverip}&key=$(_getcon APIKEY)&port=${HTTP_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
     str2="${str1}&${CONSOLE_KEY}"
     sign=$(_upper $(_md5 $str2))
     curl "${CONSOLE_URL}/api/publish/server?${str1}&sign=${sign}"
