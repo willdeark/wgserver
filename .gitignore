@@ -1,2 +1,2 @@
-etc/wireguard/*
-.env
+docker-compose.yml
+config.json

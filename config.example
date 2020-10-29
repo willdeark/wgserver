@@ -1,0 +1,14 @@
+{
+  "console": {
+    "url": "",
+    "key": ""
+  },
+  "wireguard": [
+    {
+      "name": "wgserver1",
+      "server_ip": "100.100.100.101",
+      "server_port": 11801,
+      "http_prot": 8801
+    }
+  ]
+}
