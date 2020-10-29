@@ -1,0 +1,7 @@
+{
+    "private": true,
+    "scripts": {
+        "docker:build": "docker build -t kuaifan/lws .",
+        "docker:push": "docker push kuaifan/lws"
+    }
+}

@@ -24,7 +24,7 @@ EOF
             cat >> docker-compose.yml <<-EOF
   $NAME:
     container_name: $NAME
-    build: .
+    image: kuaifan/lws
     privileged: true
     restart: always
     tty: true
