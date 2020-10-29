@@ -23,10 +23,10 @@ cp config.example config.json
   },
   "wireguard": [
     {
-      "name": "wgserver1",            //wg服务名称
-      "server_ip": "100.100.100.101", //wg服务IP，留空或填写auto自动获取
-      "server_port": 11801,           //wg服务端口
-      "http_prot": 8801               //wg服务api端口
+      "name": "wgserver1",      //wg服务名称
+      "server_ip": "auto",      //wg服务IP，留空或填写auto自动获取
+      "server_port": 11801,     //wg服务端口
+      "http_prot": 8801         //wg服务api端口
     },
     //......
   ]
@@ -37,4 +37,21 @@ cp config.example config.json
 
 ```bash
 ./cmd up -d
+```
+
+
+#### 4、已知问题及解决方案
+
+```
+# 提示1
+jq： command not found
+
+# 解决
+#Ubuntu
+sudo apt install jq -y  
+#CentOS
+sudo rpm -ivh http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum repolist
+sudo yum install jq -y 
+
 ```
