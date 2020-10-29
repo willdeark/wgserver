@@ -6,7 +6,6 @@
 ########################################################################
 
 wireguard() {
-    mkdir /etc/wireguard
     cd /etc/wireguard
     wg genkey | tee sprivatekey | wg pubkey >spublickey
     wg genkey | tee cprivatekey | wg pubkey >cpublickey
@@ -60,7 +59,7 @@ EOF
 
 lighttpd() {
     chmod a+w /dev/pts/0
-    lighttpd -D -f /etc/lighttpd/lighttpd.conf
+    exec lighttpd -D -f /etc/lighttpd/lighttpd.conf
 }
 
 entrypoint() {
