@@ -1,0 +1,17 @@
+#!/bin/sh
+. /www/functions/utils.sh
+
+########################################################################
+########################################################################
+########################################################################
+
+POST_STRING=$(cat)
+inSign=$(echo $POST_STRING | jq -r '.sign')
+mySign=$(_generatesign $POST_STRING)
+
+
+if [ "$inSign" != "$mySign" ];then
+    echo -e '{"ret":0,"msg":"token error","data":{}}'
+else
+    echo -e '{"ret":1,"msg":"success","data":{}}'
+fi
