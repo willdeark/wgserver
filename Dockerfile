@@ -1,14 +1,12 @@
 FROM alpine
 
-ENV LIGHTTPD_VERSION=1.4.55-r1
-
 RUN apk add --update --no-cache \
-    lighttpd=${LIGHTTPD_VERSION} \
+    lighttpd \
     lighttpd-mod_auth \
-    && apk add curl \
-    sudo \
+    su-exec \
+    curl \
     jq \
-    && apk --no-cache --virtual add wireguard-tools \
+    wireguard-tools \
     && rm -rf /var/cache/apk/*
 
 COPY etc/lighttpd/* /etc/lighttpd/

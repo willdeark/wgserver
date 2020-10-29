@@ -60,7 +60,7 @@ EOF
 
 lighttpd() {
     chmod a+w /dev/pts/0
-    exec lighttpd -D -f /etc/lighttpd/lighttpd.conf
+    lighttpd -D -f /etc/lighttpd/lighttpd.conf
 }
 
 entrypoint() {
