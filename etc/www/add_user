@@ -5,10 +5,14 @@
 ########################################################################
 ########################################################################
 
-APIKEY=$(_getcon APIKEY)
-echo "$APIKEY"
-
 POST_STRING=$(cat)
-sign=$(_generatesign $POST_STRING)
+inSign=$(echo $POST_STRING | jq -r '.sign')
+mySign=$(_generatesign $POST_STRING)
 
-echo $sign
+
+if [ "$inSign" != "$mySign" ];then
+    echo -e '{"ret":0,"msg":"token error","data":{}}'
+else
+    name=$(echo $POST_STRING | jq -r '.name')
+    echo -e $(wireguard_user_add $name)
+fi

@@ -65,7 +65,7 @@ wireguard_user_add(){
         ipnum=$(grep Allowed /etc/wireguard/server.conf | tail -1 | awk -F '[ ./]' '{print $6}')
         newnum=$(expr ${ipnum} + 1)
         if [ ${newnum} -gt 254 ]; then
-            echo -e '{"code":"Insufficient IP address"}'
+            echo -e '{"ret":0,"msg":"Insufficient IP address","data":{}}'
             exit 0
         fi
         sed -i 's%^PrivateKey.*$%'"PrivateKey = $(cat temprikey)"'%' "client_${client}"
@@ -79,9 +79,10 @@ EOF
         wg-quick down server
         wg-quick up server
         rm -f temprikey tempubkey
-        echo -e '{"code":0}'
+        config=$(cat "/etc/wireguard/client_${client}" | sed ':label;N;s/\n/[br]/;b label')
+        echo -e '{"ret":1,"msg":"success","data":{"PrivateKey":"'$(wireguard_user_config PrivateKey $client)'","Address":"'$(wireguard_user_config Address $client)'","DNS":"'$(wireguard_user_config DNS $client)'","MTU":"'$(wireguard_user_config MTU $client)'","PublicKey":"'$(wireguard_user_config PublicKey $client)'","AllowedIPs":"'$(wireguard_user_config AllowedIPs $client)'","Endpoint":"'$(wireguard_user_config Endpoint $client)'","PersistentKeepalive":"'$(wireguard_user_config PersistentKeepalive $client)'","config":"'${config}'"}}'
     else
-        echo -e '{"code":"Client already exists"}'
+        echo -e '{"ret":0,"msg":"Client already exists","data":{}}'
     fi
 }
 
@@ -90,11 +91,16 @@ wireguard_user_remove(){
     client_if="/etc/wireguard/client_${client}"
     default_if="/etc/wireguard/server.conf"
     if [ ! -s "${client_if}" ]; then
-        echo -e '{"code":"Client not exists"}'
+        echo -e '{"ret":0,"msg":"Client not exists","data":{}}'
         exit 0
     fi
     tmp_tag="$(grep -w "Address" ${client_if} | awk '{print $3}' | cut -d\/ -f1 )"
     [ -n "${tmp_tag}" ] && sed -i '/'"$tmp_tag"'\//d;:a;1,2!{P;$!N;D};N;ba' ${default_if}
     rm -f ${client_if}
-    echo -e '{"code":0}'
+    echo -e '{"ret":1,"msg":"success","data":{}}'
+}
+
+wireguard_user_config(){
+    client_if="/etc/wireguard/client_${client}"
+    echo -e $(sed -n -e 's/^\s*'$1'\s*=\s*//p' "$client_if")
 }

@@ -5,5 +5,14 @@
 ########################################################################
 ########################################################################
 
+POST_STRING=$(cat)
+inSign=$(echo $POST_STRING | jq -r '.sign')
+mySign=$(_generatesign $POST_STRING)
 
-echo "rmUser"
+
+if [ "$inSign" != "$mySign" ];then
+    echo -e '{"ret":0,"msg":"token error","data":{}}'
+else
+    name=$(echo $POST_STRING | jq -r '.name')
+    echo -e $(wireguard_user_remove $name)
+fi
