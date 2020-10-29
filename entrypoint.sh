@@ -16,7 +16,7 @@ wireguard() {
     eth=$(ls /sys/class/net | grep ^e | head -n1)
     serverip=$SERVER_IP
     if [ -z "$serverip" ] || [ "$serverip" == "auto" ]; then
-        serverip=$(curl ipv4.icanhazip.com)
+        serverip=$(_ipv4)
     fi
     chmod 777 -R /etc/wireguard
 

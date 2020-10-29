@@ -8,6 +8,13 @@ _upper(){
     echo -n $1 | tr "[a-z]" "[A-Z]";
 }
 
+_ipv4(){
+    ipv4="$(curl ipv4.ip.sb )"
+    [ -z "${ipv4}" ] && ipv4="$(curl ipv4.icanhazip.com )"
+    [ -z "${ipv4}" ] && ipv4="$(curl ipinfo.io/ip )"
+    printf -- "%s" "${ipv4}"
+}
+
 _rand(){
     min=$1
     max=$(($2-$min+1))
