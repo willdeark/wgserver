@@ -12,6 +12,10 @@ services:
     ports:
       - "5180:80"
       - '51820:51820/udp'
+    environment:
+      - "SERVER_URL=${SERVER_URL}"
+      - "SERVER_KEY=${SERVER_KEY}"
+      - "SERVER_PROT=5180"
     volumes:
       - './etc/www:/www'
       - './etc/lighttpd/:/etc/lighttpd'

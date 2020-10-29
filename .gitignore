@@ -1,1 +1,2 @@
 etc/wireguard/*
+.env
