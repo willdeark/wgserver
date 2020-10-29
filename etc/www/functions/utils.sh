@@ -76,9 +76,9 @@ PublicKey = $(cat tempubkey)
 AllowedIPs = 10.88.0.$newnum/32
 EOF
         chmod 600 "/etc/wireguard/client_${client}"
-        wg-quick down server
-        wg-quick up server
         rm -f temprikey tempubkey
+        sudo wg-quick down server
+        sudo wg-quick up server
         config=$(cat "/etc/wireguard/client_${client}" | sed ':label;N;s/\n/[br]/;b label')
         echo -e '{"ret":1,"msg":"success","data":{"PrivateKey":"'$(wireguard_user_config PrivateKey $client)'","Address":"'$(wireguard_user_config Address $client)'","DNS":"'$(wireguard_user_config DNS $client)'","MTU":"'$(wireguard_user_config MTU $client)'","PublicKey":"'$(wireguard_user_config PublicKey $client)'","AllowedIPs":"'$(wireguard_user_config AllowedIPs $client)'","Endpoint":"'$(wireguard_user_config Endpoint $client)'","PersistentKeepalive":"'$(wireguard_user_config PersistentKeepalive $client)'","config":"'${config}'"}}'
     else
@@ -96,9 +96,9 @@ wireguard_user_remove(){
     fi
     tmp_tag="$(grep -w "Address" ${client_if} | awk '{print $3}' | cut -d\/ -f1 )"
     [ -n "${tmp_tag}" ] && sed -i '/'"$tmp_tag"'\//d;:a;1,2!{P;$!N;D};N;ba' ${default_if}
-    wg-quick down server
-    wg-quick up server
     rm -f ${client_if}
+    sudo wg-quick down server
+    sudo wg-quick up server
     echo -e '{"ret":1,"msg":"success","data":{}}'
 }
 
