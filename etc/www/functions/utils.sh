@@ -96,6 +96,8 @@ wireguard_user_remove(){
     fi
     tmp_tag="$(grep -w "Address" ${client_if} | awk '{print $3}' | cut -d\/ -f1 )"
     [ -n "${tmp_tag}" ] && sed -i '/'"$tmp_tag"'\//d;:a;1,2!{P;$!N;D};N;ba' ${default_if}
+    wg-quick down server
+    wg-quick up server
     rm -f ${client_if}
     echo -e '{"ret":1,"msg":"success","data":{}}'
 }

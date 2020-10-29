@@ -77,9 +77,9 @@ if [ -z "$(_getcon APIKEY)" ]; then
     APIKEY=$(_rand_str)
     _setcon APIKEY "$APIKEY"
     wireguard
-    lighttpd
 fi
 
+lighttpd
 entrypoint
 
 
