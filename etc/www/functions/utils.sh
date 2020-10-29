@@ -69,11 +69,11 @@ wireguard_user_add(){
             exit 0
         fi
         sed -i 's%^PrivateKey.*$%'"PrivateKey = $(cat temprikey)"'%' "client_${client}"
-        sed -i 's%^Address.*$%'"Address = 10.77.0.$newnum\/24"'%' "client_${client}"
+        sed -i 's%^Address.*$%'"Address = 10.88.0.$newnum\/24"'%' "client_${client}"
     cat >> /etc/wireguard/server.conf <<-EOF
 [Peer]
 PublicKey = $(cat tempubkey)
-AllowedIPs = 10.77.0.$newnum/32
+AllowedIPs = 10.88.0.$newnum/32
 EOF
         chmod 600 "/etc/wireguard/client_${client}"
         wg-quick down server
