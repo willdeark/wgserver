@@ -1,52 +1,52 @@
-# wgserver
+# wireguard-server
 
-#### 1、克隆项目到您的本地或服务器
+## 1. Clone the project to your local or server
 
 ```bash
-// 克隆项目
+// Clone project
 git clone https://github.com/willdeark/wgserver.git
 
-// 进入目录
+// Enter the catalog
 cd wgserver
 
-// 拷贝 config.json
+// Copy config.json
 cp config.example config.json
 ```
 
-#### 2、修改`config.json`
+## 2. Modify `config.json`
 
 ```json
 {
   "console": {
-    "url": "",    //调度中心接口地址，如：https://c.qishi.vip
-    "key": ""     //调度中心接口KEY
+    "url": "",    //Dispatching center interface address
+    "key": ""     //Dispatching center interface KEY
   },
   "wireguard": [
     {
-      "name": "wgserver1",      //wg服务名称
-      "server_ip": "auto",      //wg服务IP，留空或填写auto自动获取
-      "server_port": 11801,     //wg服务端口
-      "http_prot": 8801         //wg服务api端口
+      "name": "wgserver1",      //Wireguard service name
+      "server_ip": "auto",      //Wireguard service IP, leave it blank or fill in `auto` to get it automatically
+      "server_port": 11801,     //Wireguard service port
+      "http_prot": 8801         //Wireguard service api port
     },
     //......
   ]
 }
 ```
 
-#### 3、运行
+## 3. Run
 
 ```bash
 ./cmd up -d
 ```
 
 
-#### 4、已知问题及解决方案
+## Issues: Known issues and solutions
 
-```
-# 提示1
+```bash
+# Error 1
 jq： command not found
 
-# 解决
+# Solve 1
 #Ubuntu
 sudo apt install jq -y  
 #CentOS
