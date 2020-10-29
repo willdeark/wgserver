@@ -10,7 +10,7 @@ git clone https://github.com/willdeark/wgserver.git
 cd wgserver
 
 // 拷贝 .env
-cp .env.docker .env
+cp .env.example .env
 ```
 
 #### 2、修改`.env`
