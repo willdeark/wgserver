@@ -70,7 +70,7 @@ wireguard_user_add(){
         fi
         sed -i 's%^PrivateKey.*$%'"PrivateKey = $(cat temprikey)"'%' "client_${client}"
         sed -i 's%^Address.*$%'"Address = 10.88.0.$newnum\/24"'%' "client_${client}"
-    cat >> /etc/wireguard/server.conf <<-EOF
+        cat >> /etc/wireguard/server.conf <<-EOF
 [Peer]
 PublicKey = $(cat tempubkey)
 AllowedIPs = 10.88.0.$newnum/32
