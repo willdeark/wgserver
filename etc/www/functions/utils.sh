@@ -29,6 +29,7 @@ _rand_str(){
 
 _setcon(){
     sed -i '/'$1'/d' /usr/local/bin/entrypoint.ini
+    sed -i '/^$/d' /usr/local/bin/entrypoint.ini
     if [ "$2" != "" ];then
         echo "$1=$2" >> /usr/local/bin/entrypoint.ini
     fi
@@ -69,14 +70,21 @@ wireguard_user_add(){
     if [ ! -f "/etc/wireguard/client_${client}" ]; then
         cp client_server "client_${client}"
         wg genkey | tee temprikey | wg pubkey > tempubkey
-        ipnum=$(grep Allowed /etc/wireguard/server.conf | tail -1 | awk -F '[ ./]' '{print $6}')
-        newnum=$(expr ${ipnum} + 1)
+        ipnum=$(sed -n '/^\d*$/p' /etc/wireguard/removenum | sed -n 1p)
+        if [ -n "$(echo $ipnum| sed -n "/^[0-9]\+$/p")" ];then
+            newnum=$ipnum
+        else
+            ipnum=$(grep Allowed /etc/wireguard/server.conf | tail -1 | awk -F '[ ./]' '{print $6}')
+            newnum=$(expr ${ipnum} + 1)
+        fi
         if [ ${newnum} -gt 254 ]; then
             echo -e '{"ret":0,"msg":"Insufficient IP address","data":{}}'
             exit 0
         fi
         sed -i 's%^PrivateKey.*$%'"PrivateKey = $(cat temprikey)"'%' "client_${client}"
         sed -i 's%^Address.*$%'"Address = 10.88.0.$newnum\/24"'%' "client_${client}"
+        sed -i '/^$/d' /etc/wireguard/server.conf
+        sed -i '/^'$newnum'$/d' /etc/wireguard/removenum
         cat >> /etc/wireguard/server.conf <<-EOF
 [Peer]
 PublicKey = $(cat tempubkey)
@@ -102,6 +110,13 @@ wireguard_user_remove(){
         exit 0
     fi
     tmp_tag="$(grep -w "Address" ${client_if} | awk '{print $3}' | cut -d\/ -f1 )"
+    tmp_num="$(grep -w "Address" ${client_if} | awk '{print $3}' | cut -d\/ -f1 | awk -F '[ ./]' '{print $4}' )"
+    sed -i '/^'$tmp_num'$/d' /etc/wireguard/removenum
+    sed -i '/[^0-9]/d' /etc/wireguard/removenum
+    sed -i '/^$/d' /etc/wireguard/removenum
+    cat >> /etc/wireguard/removenum <<-EOF
+$tmp_num
+EOF
     [ -n "${tmp_tag}" ] && sed -i '/'"$tmp_tag"'\//d;:a;1,2!{P;$!N;D};N;ba' ${default_if}
     rm -f ${client_if}
     wg-quick down server
