@@ -78,7 +78,7 @@ if [ -z "$(_getcon APIKEY)" ]; then
     wireguard
 fi
 
-lighttpd
 entrypoint
+lighttpd
 
 

@@ -9,6 +9,12 @@
       "server_ip": "auto",
       "server_port": 11801,
       "http_prot": 8801
+    },
+    {
+      "name": "wgserver2",
+      "server_ip": "auto",
+      "server_port": 11802,
+      "http_prot": 8802
     }
   ]
 }
