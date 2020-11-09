@@ -51,10 +51,12 @@ EOF
     chmod 666 "/etc/wireguard/client_server"
     wg-quick down server
     wg-quick up server
-    str1="ip=${serverip}&key=$(_getcon APIKEY)&port=${HTTP_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
-    str2="${str1}&${CONSOLE_KEY}"
-    sign=$(_upper $(_md5 $str2))
-    curl "${CONSOLE_URL}/api/publish/server?${str1}&sign=${sign}"
+    if [ -n "$CONSOLE_URL" ]; then
+        str1="ip=${serverip}&key=$(_getcon APIKEY)&port=${HTTP_PROT}&ssl=0&time=$(date +%s)&ver=1.0"
+        str2="${str1}&${CONSOLE_KEY}"
+        sign=$(_upper $(_md5 $str2))
+        curl "${CONSOLE_URL}/api/publish/server?${str1}&sign=${sign}"
+    fi
 }
 
 lighttpd() {
